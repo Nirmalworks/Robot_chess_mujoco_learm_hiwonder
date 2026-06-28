@@ -1,0 +1,252 @@
+<?xml version="1.0"?>
+<!--
+  Source: https://github.com/andrewda/learm_ros2 (BSD-3-Clause),
+  packages/learm_ros2_description/urdf/learm.urdf, meshes copied as-is.
+
+  Changes from upstream for MuJoCo:
+  - package://learm_ros2/meshes/ rewritten to the relative meshes/ path.
+  - <mujoco><compiler discardvisual="false"/></mujoco> added: MuJoCo's URDF
+    loader discards <visual> geoms by default (it expects a <collision> to
+    use instead), and this URDF has no <collision> elements at all.
+  - <inertial> blocks added to every link (upstream has none, which MuJoCo
+    requires). Mass/inertia are *approximations*: per-link mass = mesh
+    volume x an assumed effective density of 400 kg/m^3 (a rough average
+    for a hollow plastic shell with internal servo/gearing -- not measured),
+    inertia = solid-box inertia about that link's mesh bounding box. Good
+    enough for kinematic/position-based work (this project's goal); replace
+    with measured or CAD-exported values if you need accurate torque/force
+    dynamics.
+-->
+<robot name="learm">
+  <mujoco>
+    <compiler discardvisual="false"/>
+  </mujoco>
+  <link name="base_link">
+    <inertial>
+      <origin xyz="-0.06074 0.00000 0.03285"/>
+      <mass value="0.05013"/>
+      <inertia ixx="1.333e-04" ixy="0" ixz="0" iyy="3.608e-04" iyz="0" izz="4.413e-04"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="meshes/base.stl"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="shoulder_link">
+    <inertial>
+      <origin xyz="-0.00071 0.00000 0.02011"/>
+      <mass value="0.01934"/>
+      <inertia ixx="1.303e-05" ixy="0" ixz="0" iyy="1.303e-05" iyz="0" izz="2.115e-05"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="meshes/shoulder.stl"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="humerus_link">
+    <inertial>
+      <origin xyz="0.00021 -0.00054 0.05260"/>
+      <mass value="0.00777"/>
+      <inertia ixx="1.281e-05" ixy="0" ixz="0" iyy="1.119e-05" iyz="0" izz="2.437e-06"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="meshes/humerus.stl"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="forearm_link">
+    <inertial>
+      <origin xyz="-0.00004 0.00000 0.04562"/>
+      <mass value="0.01670"/>
+      <inertia ixx="2.150e-05" ixy="0" ixz="0" iyy="1.801e-05" iyz="0" izz="5.233e-06"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="meshes/forearm.stl"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="wrist_link">
+    <inertial>
+      <origin xyz="0.00986 0.00055 0.02407"/>
+      <mass value="0.01248"/>
+      <inertia ixx="7.419e-06" ixy="0" ixz="0" iyy="8.791e-06" iyz="0" izz="5.697e-06"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="meshes/wrist.stl"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="hand_link">
+    <inertial>
+      <origin xyz="0.01616 -0.00431 0.02777"/>
+      <mass value="0.00687"/>
+      <inertia ixx="3.570e-06" ixy="0" ixz="0" iyy="3.492e-06" iyz="0" izz="3.468e-06"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="meshes/hand.stl"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="grip_left_link">
+    <inertial>
+      <origin xyz="-0.00029 -0.00139 0.00928"/>
+      <mass value="0.00500"/>
+      <inertia ixx="1.343e-06" ixy="0" ixz="0" iyy="1.024e-06" iyz="0" izz="3.261e-07"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="meshes/carpal-left.stl"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="grip_right_link">
+    <inertial>
+      <origin xyz="0.00458 0.00164 0.00981"/>
+      <mass value="0.00500"/>
+      <inertia ixx="1.344e-06" ixy="0" ixz="0" iyy="1.047e-06" iyz="0" izz="3.536e-07"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="meshes/carpal-right.stl"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="tendon_left_link">
+    <inertial>
+      <origin xyz="0.00004 -0.00008 0.01451"/>
+      <mass value="0.00500"/>
+      <inertia ixx="5.610e-07" ixy="0" ixz="0" iyy="6.000e-07" iyz="0" izz="8.101e-08"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="meshes/tendon.stl"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="tendon_right_link">
+    <inertial>
+      <origin xyz="0.00004 -0.00008 0.01451"/>
+      <mass value="0.00500"/>
+      <inertia ixx="5.610e-07" ixy="0" ixz="0" iyy="6.000e-07" iyz="0" izz="8.101e-08"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="meshes/tendon.stl"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="finger_left_link">
+    <inertial>
+      <origin xyz="0.00004 -0.00518 0.02471"/>
+      <mass value="0.00500"/>
+      <inertia ixx="1.641e-06" ixy="0" ixz="0" iyy="1.482e-06" iyz="0" izz="1.891e-07"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="meshes/finger.stl"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="finger_right_link">
+    <inertial>
+      <origin xyz="0.00004 -0.00518 0.02471"/>
+      <mass value="0.00500"/>
+      <inertia ixx="1.641e-06" ixy="0" ixz="0" iyy="1.482e-06" iyz="0" izz="1.891e-07"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 3.14159"/>
+      <geometry>
+        <mesh filename="meshes/finger.stl"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="shoulder_pan" type="revolute">
+    <parent link="base_link"/>
+    <child link="shoulder_link"/>
+    <origin xyz="0 0 0.059"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.57" upper="1.57" effort="1000" velocity="0.5"/>
+  </joint>
+  <joint name="shoulder_lift" type="revolute">
+    <parent link="shoulder_link"/>
+    <child link="humerus_link"/>
+    <origin xyz="-0.010 0 0.028"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="1000" velocity="0.5"/>
+  </joint>
+  <joint name="elbow" type="revolute">
+    <parent link="humerus_link"/>
+    <child link="forearm_link"/>
+    <origin xyz="0 0 0.105"/>
+    <axis xyz="0 -1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="1000" velocity="0.5"/>
+  </joint>
+  <joint name="wrist_flex" type="revolute">
+    <parent link="forearm_link"/>
+    <child link="wrist_link"/>
+    <origin xyz="0 0 0.090"/>
+    <axis xyz="0 -1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="1000" velocity="0.5"/>
+  </joint>
+  <joint name="wrist_roll" type="revolute">
+    <parent link="wrist_link"/>
+    <child link="hand_link"/>
+    <origin xyz="0 0 0.060"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.57" upper="1.57" effort="1000" velocity="0.5"/>
+  </joint>
+  <joint name="grip_left" type="revolute">
+    <parent link="hand_link"/>
+    <child link="grip_left_link"/>
+    <origin xyz="0 +0.015 0.030" rpy="-1.57 0 0"/>
+    <axis xyz="-1 0 0"/>
+    <limit lower="-1.57" upper="0" effort="1000" velocity="0.5"/>
+  </joint>
+  <joint name="grip_right" type="revolute">
+    <parent link="hand_link"/>
+    <child link="grip_right_link"/>
+    <origin xyz="0 -0.015 0.030" rpy="1.57 0 0"/>
+    <axis xyz="-1 0 0"/>
+    <limit lower="0" upper="1.57" effort="1000" velocity="0.5"/>
+    <mimic joint="grip_left" multiplier="-1"/>
+  </joint>
+  <joint name="tendon_left" type="revolute">
+    <parent link="hand_link"/>
+    <child link="tendon_left_link"/>
+    <origin xyz="0 +0.005 0.050" rpy="-1.57 0 0"/>
+    <axis xyz="-1 0 0"/>
+    <limit lower="-1.57" upper="0" effort="1000" velocity="0.5"/>
+    <mimic joint="grip_left"/>
+  </joint>
+  <joint name="tendon_right" type="revolute">
+    <parent link="hand_link"/>
+    <child link="tendon_right_link"/>
+    <origin xyz="0 -0.005 0.050" rpy="1.57 0 0"/>
+    <axis xyz="-1 0 0"/>
+    <limit lower="0" upper="1.57" effort="1000" velocity="0.5"/>
+    <mimic joint="grip_left" multiplier="-1"/>
+  </joint>
+  <joint name="finger_left" type="revolute">
+    <parent link="grip_left_link"/>
+    <child link="finger_left_link"/>
+    <origin xyz="0 0 0.030" rpy="1.57 0 0"/>
+    <axis xyz="-1 0 0"/>
+    <limit lower="-1.57" upper="0" effort="1000" velocity="0.5"/>
+    <mimic joint="grip_left" multiplier="-1"/>
+  </joint>
+  <joint name="finger_right" type="revolute">
+    <parent link="grip_right_link"/>
+    <child link="finger_right_link"/>
+    <origin xyz="0 0 0.030" rpy="-1.57 0 0"/>
+    <axis xyz="-1 0 0"/>
+    <limit lower="0" upper="1.57" effort="1000" velocity="0.5"/>
+    <mimic joint="grip_left"/>
+  </joint>
+</robot>

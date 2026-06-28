@@ -4,16 +4,16 @@
       "name": "Arduino",
       "includePath": [
         "${workspaceFolder}/**",
-        "/Users/nirmal/Library/Arduino15/libraries/Servo/src",
-        "/Users/nirmal/Library/Arduino15/packages/arduino/hardware/avr/1.8.7/cores/arduino",
-        "/Users/nirmal/Library/Arduino15/packages/arduino/hardware/avr/1.8.7/variants/standard",
-        "/Users/nirmal/Library/Arduino15/packages/arduino/tools/avr-gcc/7.3.0-atmel3.6.1-arduino7/avr/include"
+        "/home/nirmal/Arduino/libraries/Servo/src",
+        "/home/nirmal/.arduino15/packages/arduino/hardware/avr/1.8.8/cores/arduino",
+        "/home/nirmal/.arduino15/packages/arduino/hardware/avr/1.8.8/variants/standard",
+        "/home/nirmal/.arduino15/packages/arduino/tools/avr-gcc/7.3.0-atmel3.6.1-arduino7/avr/include"
       ],
       "forcedInclude": [
-        "/Users/nirmal/Library/Arduino15/packages/arduino/hardware/avr/1.8.7/cores/arduino/Arduino.h"
+        "/home/nirmal/.arduino15/packages/arduino/hardware/avr/1.8.8/cores/arduino/Arduino.h"
       ],
-      "defines": ["ARDUINO=10607", "F_CPU=16000000L", "__AVR_ATmega328P__"],
-      "compilerPath": "/Users/nirmal/Library/Arduino15/packages/arduino/tools/avr-gcc/7.3.0-atmel3.6.1-arduino7/bin/avr-gcc",
+      "defines": ["ARDUINO=10608", "F_CPU=16000000L", "__AVR_ATmega328P__"],
+      "compilerPath": "/home/nirmal/.arduino15/packages/arduino/tools/avr-gcc/7.3.0-atmel3.6.1-arduino7/bin/avr-gcc",
       "cStandard": "c11",
       "cppStandard": "c++11",
       "intelliSenseMode": "gcc"

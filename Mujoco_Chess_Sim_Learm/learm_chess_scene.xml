@@ -1,0 +1,192 @@
+<mujoco model="chess_table">
+  <compiler angle="radian"/>
+
+  <option integrator="implicitfast"/>
+
+  <visual>
+    <global offwidth="1280" offheight="960"/>
+    <headlight ambient="0.4 0.4 0.4" diffuse="0.6 0.6 0.6"/>
+  </visual>
+
+  <default>
+    <default class="arm_main"/>
+  </default>
+
+  <asset>
+    <texture type="skybox" colorspace="auto" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="256" height="1536"/>
+    <texture type="2d" colorspace="auto" name="floor_tex" builtin="checker" rgb1="0.2 0.2 0.2" rgb2="0.3 0.3 0.3" width="300" height="300"/>
+    <texture type="2d" colorspace="auto" name="board_tex" builtin="checker" rgb1="0.85 0.82 0.7" rgb2="0.2 0.15 0.1" width="64" height="64"/>
+    <material name="floor_mat" texture="floor_tex" texrepeat="6 6"/>
+    <material name="table_mat" rgba="0.45 0.3 0.18 1"/>
+    <material name="leg_mat" rgba="0.3 0.2 0.12 1"/>
+    <material name="board_mat" texture="board_tex" texrepeat="4 4" reflectance="0.05"/>
+    <mesh name="arm_base" file="meshes/base.stl"/>
+    <mesh name="arm_shoulder" file="meshes/shoulder.stl"/>
+    <mesh name="arm_humerus" file="meshes/humerus.stl"/>
+    <mesh name="arm_forearm" file="meshes/forearm.stl"/>
+    <mesh name="arm_wrist" file="meshes/wrist.stl"/>
+    <mesh name="arm_hand" file="meshes/hand.stl"/>
+    <mesh name="arm_carpal-left" file="meshes/carpal-left.stl"/>
+    <mesh name="arm_carpal-right" file="meshes/carpal-right.stl"/>
+    <mesh name="arm_tendon" file="meshes/tendon.stl"/>
+    <mesh name="arm_finger" file="meshes/finger.stl"/>
+  </asset>
+
+  <worldbody>
+    <geom name="floor" size="1.5 1.5 0.01" pos="0 0 -0.4" type="plane" material="floor_mat"/>
+    <light pos="0 0 1.5" dir="0 0 -1" type="directional" specular="0.2 0.2 0.2"/>
+    <light pos="0.3 0.3 1.2" dir="-0.276172 -0.276172 -0.920575" type="directional" diffuse="0.3 0.3 0.3"/>
+    <body name="table">
+      <geom name="tabletop" size="0.3 0.25 0.01" pos="0 0 -0.01" type="box" material="table_mat"/>
+      <geom name="leg_fl" size="0.015 0.015 0.19" pos="0.27 0.22 -0.21" type="box" material="leg_mat"/>
+      <geom name="leg_fr" size="0.015 0.015 0.19" pos="0.27 -0.22 -0.21" type="box" material="leg_mat"/>
+      <geom name="leg_bl" size="0.015 0.015 0.19" pos="-0.27 0.22 -0.21" type="box" material="leg_mat"/>
+      <geom name="leg_br" size="0.015 0.015 0.19" pos="-0.27 -0.22 -0.21" type="box" material="leg_mat"/>
+    </body>
+    <body name="chessboard" pos="0.14 0 0">
+      <geom name="board_base" size="0.1 0.1 0.002" pos="0 0 0.002" type="box" rgba="0.25 0.18 0.1 1"/>
+      <geom name="board_slab" size="0.1 0.1 0.01" pos="0 0 0.0045" type="plane" material="board_mat"/>
+      <site name="sq_a1" pos="-0.0875 -0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_a2" pos="-0.0625 -0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_a3" pos="-0.0375 -0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_a4" pos="-0.0125 -0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_a5" pos="0.0125 -0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_a6" pos="0.0375 -0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_a7" pos="0.0625 -0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_a8" pos="0.0875 -0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_b1" pos="-0.0875 -0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_b2" pos="-0.0625 -0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_b3" pos="-0.0375 -0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_b4" pos="-0.0125 -0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_b5" pos="0.0125 -0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_b6" pos="0.0375 -0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_b7" pos="0.0625 -0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_b8" pos="0.0875 -0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_c1" pos="-0.0875 -0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_c2" pos="-0.0625 -0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_c3" pos="-0.0375 -0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_c4" pos="-0.0125 -0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_c5" pos="0.0125 -0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_c6" pos="0.0375 -0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_c7" pos="0.0625 -0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_c8" pos="0.0875 -0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_d1" pos="-0.0875 -0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_d2" pos="-0.0625 -0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_d3" pos="-0.0375 -0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_d4" pos="-0.0125 -0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_d5" pos="0.0125 -0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_d6" pos="0.0375 -0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_d7" pos="0.0625 -0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_d8" pos="0.0875 -0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_e1" pos="-0.0875 0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_e2" pos="-0.0625 0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_e3" pos="-0.0375 0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_e4" pos="-0.0125 0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_e5" pos="0.0125 0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_e6" pos="0.0375 0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_e7" pos="0.0625 0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_e8" pos="0.0875 0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_f1" pos="-0.0875 0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_f2" pos="-0.0625 0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_f3" pos="-0.0375 0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_f4" pos="-0.0125 0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_f5" pos="0.0125 0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_f6" pos="0.0375 0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_f7" pos="0.0625 0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_f8" pos="0.0875 0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_g1" pos="-0.0875 0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_g2" pos="-0.0625 0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_g3" pos="-0.0375 0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_g4" pos="-0.0125 0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_g5" pos="0.0125 0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_g6" pos="0.0375 0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_g7" pos="0.0625 0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_g8" pos="0.0875 0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_h1" pos="-0.0875 0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_h2" pos="-0.0625 0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_h3" pos="-0.0375 0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_h4" pos="-0.0125 0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_h5" pos="0.0125 0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_h6" pos="0.0375 0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_h7" pos="0.0625 0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_h8" pos="0.0875 0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+    </body>
+    <body name="arm_base_link" pos="-0.03 0 0">
+      <inertial pos="-0.06074 0 0.03285" quat="0 0.707107 0 0.707107" mass="0.05013" diaginertia="0.0004413 0.0003608 0.0001333"/>
+      <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_base"/>
+      <body name="arm_shoulder_link" pos="0 0 0.059">
+        <inertial pos="-0.00071 0 0.02011" quat="0.5 0.5 -0.5 0.5" mass="0.01934" diaginertia="2.115e-05 1.303e-05 1.303e-05"/>
+        <joint name="arm_shoulder_pan" pos="0 0 0" axis="0 0 1" range="-1.57 1.57" actuatorfrcrange="-1000 1000"/>
+        <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_shoulder"/>
+        <body name="arm_humerus_link" pos="-0.01 0 0.028">
+          <inertial pos="0.00021 -0.00054 0.0526" mass="0.00777" diaginertia="1.281e-05 1.119e-05 2.437e-06"/>
+          <joint name="arm_shoulder_lift" pos="0 0 0" axis="0 1 0" range="-1.57 1.57" actuatorfrcrange="-1000 1000"/>
+          <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_humerus"/>
+          <body name="arm_forearm_link" pos="0 0 0.105">
+            <inertial pos="-4e-05 0 0.04562" mass="0.0167" diaginertia="2.15e-05 1.801e-05 5.233e-06"/>
+            <joint name="arm_elbow" pos="0 0 0" axis="0 -1 0" range="-1.57 1.57" actuatorfrcrange="-1000 1000"/>
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_forearm"/>
+            <body name="arm_wrist_link" pos="0 0 0.09">
+              <inertial pos="0.00986 0.00055 0.02407" quat="0.707107 0 0 0.707107" mass="0.01248" diaginertia="8.791e-06 7.419e-06 5.697e-06"/>
+              <joint name="arm_wrist_flex" pos="0 0 0" axis="0 -1 0" range="-1.57 1.57" actuatorfrcrange="-1000 1000"/>
+              <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_wrist"/>
+              <body name="arm_hand_link" pos="0 0 0.06">
+                <inertial pos="0.01616 -0.00431 0.02777" mass="0.00687" diaginertia="3.57e-06 3.492e-06 3.468e-06"/>
+                <joint name="arm_wrist_roll" pos="0 0 0" axis="0 0 1" range="-1.57 1.57" actuatorfrcrange="-1000 1000"/>
+                <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_hand"/>
+                <site name="gripper_tip" pos="0 0 0.085" size="0.004"/>
+                <body name="arm_grip_left_link" pos="0 0.015 0.03" quat="0.707388 -0.706825 0 0">
+                  <inertial pos="-0.00029 -0.00139 0.00928" mass="0.005" diaginertia="1.343e-06 1.024e-06 3.261e-07"/>
+                  <joint name="arm_grip_left" pos="0 0 0" axis="-1 0 0" range="-1.57 0" actuatorfrcrange="-1000 1000"/>
+                  <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_carpal-left"/>
+                  <body name="arm_finger_left_link" pos="0 0 0.03" quat="0.707388 0.706825 0 0">
+                    <inertial pos="4e-05 -0.00518 0.02471" mass="0.005" diaginertia="1.641e-06 1.482e-06 1.891e-07"/>
+                    <joint name="arm_finger_left" pos="0 0 0" axis="-1 0 0" range="-3.14 3.14" actuatorfrcrange="-1000 1000"/>
+                    <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_finger"/>
+                  </body>
+                </body>
+                <body name="arm_grip_right_link" pos="0 -0.015 0.03" quat="0.707388 0.706825 0 0">
+                  <inertial pos="0.00458 0.00164 0.00981" mass="0.005" diaginertia="1.344e-06 1.047e-06 3.536e-07"/>
+                  <joint name="arm_grip_right" pos="0 0 0" axis="-1 0 0" range="-3.14 3.14" actuatorfrcrange="-1000 1000"/>
+                  <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_carpal-right"/>
+                  <body name="arm_finger_right_link" pos="0 0 0.03" quat="0.707388 -0.706825 0 0">
+                    <inertial pos="4e-05 -0.00518 0.02471" mass="0.005" diaginertia="1.641e-06 1.482e-06 1.891e-07"/>
+                    <joint name="arm_finger_right" pos="0 0 0" axis="-1 0 0" range="-3.14 3.14" actuatorfrcrange="-1000 1000"/>
+                    <geom quat="1.32679e-06 0 0 1" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_finger"/>
+                  </body>
+                </body>
+                <body name="arm_tendon_left_link" pos="0 0.005 0.05" quat="0.707388 -0.706825 0 0">
+                  <inertial pos="4e-05 -8e-05 0.01451" quat="0.707107 0 0 0.707107" mass="0.005" diaginertia="6e-07 5.61e-07 8.101e-08"/>
+                  <joint name="arm_tendon_left" pos="0 0 0" axis="-1 0 0" range="-3.14 3.14" actuatorfrcrange="-1000 1000"/>
+                  <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_tendon"/>
+                </body>
+                <body name="arm_tendon_right_link" pos="0 -0.005 0.05" quat="0.707388 0.706825 0 0">
+                  <inertial pos="4e-05 -8e-05 0.01451" quat="0.707107 0 0 0.707107" mass="0.005" diaginertia="6e-07 5.61e-07 8.101e-08"/>
+                  <joint name="arm_tendon_right" pos="0 0 0" axis="-1 0 0" range="-3.14 3.14" actuatorfrcrange="-1000 1000"/>
+                  <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_tendon"/>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <equality>
+    <joint joint1="arm_grip_right" joint2="arm_grip_left" polycoef="0 -1 0 0 0"/>
+    <joint joint1="arm_tendon_left" joint2="arm_grip_left" polycoef="0 1 0 0 0"/>
+    <joint joint1="arm_tendon_right" joint2="arm_grip_left" polycoef="0 -1 0 0 0"/>
+    <joint joint1="arm_finger_left" joint2="arm_grip_left" polycoef="0 -1 0 0 0"/>
+    <joint joint1="arm_finger_right" joint2="arm_grip_left" polycoef="0 1 0 0 0"/>
+  </equality>
+
+  <actuator>
+    <general name="act_shoulder_pan" joint="arm_shoulder_pan" ctrlrange="-1.57 1.57" biastype="affine" gainprm="40" biasprm="0 -40 -2"/>
+    <general name="act_shoulder_lift" joint="arm_shoulder_lift" ctrlrange="-1.57 1.57" biastype="affine" gainprm="40" biasprm="0 -40 -2"/>
+    <general name="act_elbow" joint="arm_elbow" ctrlrange="-1.57 1.57" biastype="affine" gainprm="40" biasprm="0 -40 -2"/>
+    <general name="act_wrist_flex" joint="arm_wrist_flex" ctrlrange="-1.57 1.57" biastype="affine" gainprm="40" biasprm="0 -40 -2"/>
+    <general name="act_wrist_roll" joint="arm_wrist_roll" ctrlrange="-1.57 1.57" biastype="affine" gainprm="40" biasprm="0 -40 -2"/>
+    <general name="act_grip_left" joint="arm_grip_left" ctrlrange="-1.57 0" biastype="affine" gainprm="40" biasprm="0 -40 -2"/>
+  </actuator>
+</mujoco>

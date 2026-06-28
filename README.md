@@ -5,7 +5,7 @@ the servos, and a Python script that lets you drive it live with an Xbox control
 
 ## Contents
 
-- [`Ardunio_Control_Learm/Code_for_movingarm_in_ardunio.ino`](Ardunio_Control_Learm/Code_for_movingarm_in_ardunio.ino) —
+- [`Ardunio_Control_Learm/Ardunio_Control_Learm.ino`](Ardunio_Control_Learm/Ardunio_Control_Learm.ino) —
   Arduino sketch that reads target servo angles over serial and smoothly moves
   the arm's 6 servos (base, shoulder, arm, wrist, elbow, gripper) toward them.
 - [`Python_Control_Learm/xbox_controller_arm_control.py`](Python_Control_Learm/xbox_controller_arm_control.py) —
@@ -13,6 +13,12 @@ the servos, and a Python script that lets you drive it live with an Xbox control
   positions to the Arduino over serial.
 - [`Python_Control_Learm/requirements.txt`](Python_Control_Learm/requirements.txt) —
   Python dependencies (`pyserial`, `pygame`).
+- [`Mujoco_Chess_Sim_Learm/`](Mujoco_Chess_Sim_Learm/) —
+  MuJoCo simulation of the LeArm (URDF from
+  [andrewda/learm_ros2](https://github.com/andrewda/learm_ros2)) at a chess
+  board on a table, plus the 2-corner board-calibration approximation method.
+  Pure simulation — see that folder's README for whether/how it connects to
+  the real hardware above.
 
 ## Hardware wiring
 

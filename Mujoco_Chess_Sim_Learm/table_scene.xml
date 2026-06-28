@@ -1,0 +1,47 @@
+<mujoco model="chess_table">
+  <option timestep="0.002" gravity="0 0 -9.81" integrator="implicitfast"/>
+
+  <visual>
+    <headlight ambient="0.4 0.4 0.4" diffuse="0.6 0.6 0.6"/>
+    <global offwidth="1280" offheight="960"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="256" height="256"/>
+    <texture name="floor_tex" type="2d" builtin="checker" rgb1="0.2 0.2 0.2" rgb2="0.3 0.3 0.3" width="300" height="300"/>
+    <material name="floor_mat" texture="floor_tex" texrepeat="6 6" reflectance="0.0"/>
+    <material name="table_mat" rgba="0.45 0.30 0.18 1"/>
+    <material name="leg_mat" rgba="0.30 0.20 0.12 1"/>
+    <!-- Procedural checker pattern for the chess board: one textured geom
+         instead of 64 hand-placed square geoms. -->
+    <texture name="board_tex" type="2d" builtin="checker" rgb1="0.85 0.82 0.70" rgb2="0.20 0.15 0.10"
+              width="64" height="64"/>
+    <material name="board_mat" texture="board_tex" texrepeat="4 4" texuniform="false" reflectance="0.05"/>
+  </asset>
+
+  <worldbody>
+    <light pos="0 0 1.5" dir="0 0 -1" diffuse="0.7 0.7 0.7" specular="0.2 0.2 0.2" directional="true"/>
+    <light pos="0.3 0.3 1.2" dir="-0.3 -0.3 -1" diffuse="0.3 0.3 0.3" directional="true"/>
+
+    <!-- Floor, well below the tabletop -->
+    <geom name="floor" type="plane" size="1.5 1.5 0.01" pos="0 0 -0.40" material="floor_mat"/>
+
+    <!-- Table: top surface defined at world z = 0 -->
+    <body name="table" pos="0 0 0">
+      <geom name="tabletop" type="box" size="0.30 0.25 0.01" pos="0 0 -0.01" material="table_mat"/>
+      <geom name="leg_fl" type="box" size="0.015 0.015 0.19" pos="0.27 0.22 -0.21" material="leg_mat"/>
+      <geom name="leg_fr" type="box" size="0.015 0.015 0.19" pos="0.27 -0.22 -0.21" material="leg_mat"/>
+      <geom name="leg_bl" type="box" size="0.015 0.015 0.19" pos="-0.27 0.22 -0.21" material="leg_mat"/>
+      <geom name="leg_br" type="box" size="0.015 0.015 0.19" pos="-0.27 -0.22 -0.21" material="leg_mat"/>
+    </body>
+
+    <!-- Chessboard: 8x8 grid, square = 0.025 m, sitting on the tabletop.
+         Centre placed in the arm's comfortable mid-reach zone.
+         NOTE: intentionally no top-down/overhead camera here -- position is
+         meant to be found via the 2-corner interpolation method, not vision. -->
+    <body name="chessboard" pos="0.14 0 0.0">
+      <geom name="board_base" type="box" size="0.10 0.10 0.002" pos="0 0 0.002" rgba="0.25 0.18 0.10 1"/>
+      <geom name="board_slab" type="plane" size="0.10 0.10 0.01" pos="0 0 0.0045" material="board_mat"/>
+    </body>
+  </worldbody>
+</mujoco>
