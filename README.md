@@ -8,10 +8,10 @@ the servos, and a Python script that lets you drive it live with an Xbox control
 - [`Ardunio_Control_Learm/Code_for_movingarm_in_ardunio.ino`](Ardunio_Control_Learm/Code_for_movingarm_in_ardunio.ino) —
   Arduino sketch that reads target servo angles over serial and smoothly moves
   the arm's 6 servos (base, shoulder, arm, wrist, elbow, gripper) toward them.
-- [`Ardunio_Control_Learm/xbox_controller_arm_control.py`](Ardunio_Control_Learm/xbox_controller_arm_control.py) —
+- [`Python_Control_Learm/xbox_controller_arm_control.py`](Python_Control_Learm/xbox_controller_arm_control.py) —
   Python script that reads an Xbox controller with `pygame` and streams servo
   positions to the Arduino over serial.
-- [`Ardunio_Control_Learm/requirements.txt`](Ardunio_Control_Learm/requirements.txt) —
+- [`Python_Control_Learm/requirements.txt`](Python_Control_Learm/requirements.txt) —
   Python dependencies (`pyserial`, `pygame`).
 
 ## Hardware wiring
@@ -65,14 +65,14 @@ the target at 1°/15ms per joint, instead of snapping instantly.
 
 1. Install dependencies:
    ```
-   pip install -r Ardunio_Control_Learm/requirements.txt
+   pip install -r Python_Control_Learm/requirements.txt
    ```
 2. Plug in an Xbox controller and connect the Arduino over USB.
 3. Edit `COM_PORT` in `xbox_controller_arm_control.py` to match your serial port
    (e.g. `COM4` on Windows, or `/dev/tty.usbmodemXXXX` on macOS).
 4. Run:
    ```
-   python Ardunio_Control_Learm/xbox_controller_arm_control.py
+   python Python_Control_Learm/xbox_controller_arm_control.py
    ```
 
 ### Controls
