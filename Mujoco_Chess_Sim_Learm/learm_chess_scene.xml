@@ -37,79 +37,79 @@
     <light pos="0 0 1.5" dir="0 0 -1" type="directional" specular="0.2 0.2 0.2"/>
     <light pos="0.3 0.3 1.2" dir="-0.276172 -0.276172 -0.920575" type="directional" diffuse="0.3 0.3 0.3"/>
     <body name="table">
-      <geom name="tabletop" size="0.3 0.25 0.01" pos="0 0 -0.01" type="box" material="table_mat"/>
-      <geom name="leg_fl" size="0.015 0.015 0.19" pos="0.27 0.22 -0.21" type="box" material="leg_mat"/>
-      <geom name="leg_fr" size="0.015 0.015 0.19" pos="0.27 -0.22 -0.21" type="box" material="leg_mat"/>
-      <geom name="leg_bl" size="0.015 0.015 0.19" pos="-0.27 0.22 -0.21" type="box" material="leg_mat"/>
-      <geom name="leg_br" size="0.015 0.015 0.19" pos="-0.27 -0.22 -0.21" type="box" material="leg_mat"/>
+      <geom name="tabletop" size="0.4 0.32 0.01" pos="0 0 -0.01" type="box" material="table_mat"/>
+      <geom name="leg_fl" size="0.015 0.015 0.19" pos="0.37 0.29 -0.21" type="box" material="leg_mat"/>
+      <geom name="leg_fr" size="0.015 0.015 0.19" pos="0.37 -0.29 -0.21" type="box" material="leg_mat"/>
+      <geom name="leg_bl" size="0.015 0.015 0.19" pos="-0.37 0.29 -0.21" type="box" material="leg_mat"/>
+      <geom name="leg_br" size="0.015 0.015 0.19" pos="-0.37 -0.29 -0.21" type="box" material="leg_mat"/>
     </body>
-    <body name="chessboard" pos="0.14 0 0">
-      <geom name="board_base" size="0.1 0.1 0.002" pos="0 0 0.002" type="box" rgba="0.25 0.18 0.1 1"/>
-      <geom name="board_slab" size="0.1 0.1 0.01" pos="0 0 0.0045" type="plane" material="board_mat"/>
-      <site name="sq_a1" pos="-0.0875 -0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_a2" pos="-0.0625 -0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_a3" pos="-0.0375 -0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_a4" pos="-0.0125 -0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_a5" pos="0.0125 -0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_a6" pos="0.0375 -0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_a7" pos="0.0625 -0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_a8" pos="0.0875 -0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_b1" pos="-0.0875 -0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_b2" pos="-0.0625 -0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_b3" pos="-0.0375 -0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_b4" pos="-0.0125 -0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_b5" pos="0.0125 -0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_b6" pos="0.0375 -0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_b7" pos="0.0625 -0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_b8" pos="0.0875 -0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_c1" pos="-0.0875 -0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_c2" pos="-0.0625 -0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_c3" pos="-0.0375 -0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_c4" pos="-0.0125 -0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_c5" pos="0.0125 -0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_c6" pos="0.0375 -0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_c7" pos="0.0625 -0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_c8" pos="0.0875 -0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_d1" pos="-0.0875 -0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_d2" pos="-0.0625 -0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_d3" pos="-0.0375 -0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_d4" pos="-0.0125 -0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_d5" pos="0.0125 -0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_d6" pos="0.0375 -0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_d7" pos="0.0625 -0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_d8" pos="0.0875 -0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_e1" pos="-0.0875 0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_e2" pos="-0.0625 0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_e3" pos="-0.0375 0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_e4" pos="-0.0125 0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_e5" pos="0.0125 0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_e6" pos="0.0375 0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_e7" pos="0.0625 0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_e8" pos="0.0875 0.0125 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_f1" pos="-0.0875 0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_f2" pos="-0.0625 0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_f3" pos="-0.0375 0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_f4" pos="-0.0125 0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_f5" pos="0.0125 0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_f6" pos="0.0375 0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_f7" pos="0.0625 0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_f8" pos="0.0875 0.0375 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_g1" pos="-0.0875 0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_g2" pos="-0.0625 0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_g3" pos="-0.0375 0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_g4" pos="-0.0125 0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_g5" pos="0.0125 0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_g6" pos="0.0375 0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_g7" pos="0.0625 0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_g8" pos="0.0875 0.0625 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_h1" pos="-0.0875 0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_h2" pos="-0.0625 0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_h3" pos="-0.0375 0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_h4" pos="-0.0125 0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_h5" pos="0.0125 0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_h6" pos="0.0375 0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_h7" pos="0.0625 0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
-      <site name="sq_h8" pos="0.0875 0.0875 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+    <body name="chessboard" pos="0.192 0 0">
+      <geom name="board_base" size="0.072 0.072 0.002" pos="0 0 0.002" type="box" rgba="0.25 0.18 0.1 1"/>
+      <geom name="board_slab" size="0.072 0.072 0.01" pos="0 0 0.0045" type="plane" material="board_mat"/>
+      <site name="sq_a1" pos="-0.063 -0.063 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_a2" pos="-0.045 -0.063 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_a3" pos="-0.027 -0.063 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_a4" pos="-0.009 -0.063 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_a5" pos="0.009 -0.063 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_a6" pos="0.027 -0.063 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_a7" pos="0.045 -0.063 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_a8" pos="0.063 -0.063 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_b1" pos="-0.063 -0.045 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_b2" pos="-0.045 -0.045 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_b3" pos="-0.027 -0.045 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_b4" pos="-0.009 -0.045 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_b5" pos="0.009 -0.045 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_b6" pos="0.027 -0.045 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_b7" pos="0.045 -0.045 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_b8" pos="0.063 -0.045 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_c1" pos="-0.063 -0.027 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_c2" pos="-0.045 -0.027 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_c3" pos="-0.027 -0.027 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_c4" pos="-0.009 -0.027 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_c5" pos="0.009 -0.027 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_c6" pos="0.027 -0.027 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_c7" pos="0.045 -0.027 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_c8" pos="0.063 -0.027 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_d1" pos="-0.063 -0.009 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_d2" pos="-0.045 -0.009 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_d3" pos="-0.027 -0.009 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_d4" pos="-0.009 -0.009 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_d5" pos="0.009 -0.009 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_d6" pos="0.027 -0.009 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_d7" pos="0.045 -0.009 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_d8" pos="0.063 -0.009 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_e1" pos="-0.063 0.009 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_e2" pos="-0.045 0.009 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_e3" pos="-0.027 0.009 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_e4" pos="-0.009 0.009 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_e5" pos="0.009 0.009 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_e6" pos="0.027 0.009 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_e7" pos="0.045 0.009 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_e8" pos="0.063 0.009 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_f1" pos="-0.063 0.027 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_f2" pos="-0.045 0.027 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_f3" pos="-0.027 0.027 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_f4" pos="-0.009 0.027 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_f5" pos="0.009 0.027 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_f6" pos="0.027 0.027 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_f7" pos="0.045 0.027 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_f8" pos="0.063 0.027 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_g1" pos="-0.063 0.045 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_g2" pos="-0.045 0.045 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_g3" pos="-0.027 0.045 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_g4" pos="-0.009 0.045 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_g5" pos="0.009 0.045 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_g6" pos="0.027 0.045 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_g7" pos="0.045 0.045 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_g8" pos="0.063 0.045 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_h1" pos="-0.063 0.063 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_h2" pos="-0.045 0.063 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_h3" pos="-0.027 0.063 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_h4" pos="-0.009 0.063 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_h5" pos="0.009 0.063 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_h6" pos="0.027 0.063 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_h7" pos="0.045 0.063 0.0046" size="0.002" rgba="1 0 0 0.6"/>
+      <site name="sq_h8" pos="0.063 0.063 0.0046" size="0.002" rgba="1 0 0 0.6"/>
     </body>
     <body name="arm_base_link" pos="-0.03 0 0">
       <inertial pos="-0.06074 0 0.03285" quat="0 0.707107 0 0.707107" mass="0.05013" diaginertia="0.0004413 0.0003608 0.0001333"/>
@@ -170,6 +170,150 @@
           </body>
         </body>
       </body>
+    </body>
+    <body name="piece_a1" pos="0.129 -0.063 0.0046">
+      <joint type="free"/>
+      <geom size="0.00612 0.00612 0.009" pos="0 0 0.009" type="box" rgba="0.92 0.92 0.85 1"/>
+    </body>
+    <body name="piece_a8" pos="0.255 -0.063 0.0046">
+      <joint type="free"/>
+      <geom size="0.00612 0.00612 0.009" pos="0 0 0.009" type="box" rgba="0.1 0.1 0.1 1"/>
+    </body>
+    <body name="piece_b1" pos="0.129 -0.045 0.0046">
+      <joint type="free"/>
+      <geom size="0.0054 0.0054 0.0081" pos="0 0 0.0081" type="box" rgba="0.92 0.92 0.85 1"/>
+      <geom size="0.00288 0.00216 0.00216" pos="0.00288 0 0.01404" type="box" rgba="0.92 0.92 0.85 1"/>
+    </body>
+    <body name="piece_b8" pos="0.255 -0.045 0.0046">
+      <joint type="free"/>
+      <geom size="0.0054 0.0054 0.0081" pos="0 0 0.0081" type="box" rgba="0.1 0.1 0.1 1"/>
+      <geom size="0.00288 0.00216 0.00216" pos="0.00288 0 0.01404" type="box" rgba="0.1 0.1 0.1 1"/>
+    </body>
+    <body name="piece_c1" pos="0.129 -0.027 0.0046">
+      <joint type="free"/>
+      <geom size="0.0054 0.009" pos="0 0 0.009" type="cylinder" rgba="0.92 0.92 0.85 1"/>
+      <geom size="0.00396" pos="0 0 0.0189" rgba="0.92 0.92 0.85 1"/>
+    </body>
+    <body name="piece_c8" pos="0.255 -0.027 0.0046">
+      <joint type="free"/>
+      <geom size="0.0054 0.009" pos="0 0 0.009" type="cylinder" rgba="0.1 0.1 0.1 1"/>
+      <geom size="0.00396" pos="0 0 0.0189" rgba="0.1 0.1 0.1 1"/>
+    </body>
+    <body name="piece_d1" pos="0.129 -0.009 0.0046">
+      <joint type="free"/>
+      <geom size="0.00612 0.0099" pos="0 0 0.0099" type="cylinder" rgba="0.92 0.92 0.85 1"/>
+      <geom size="0.0054" pos="0 0 0.0207" rgba="0.92 0.92 0.85 1"/>
+    </body>
+    <body name="piece_d8" pos="0.255 -0.009 0.0046">
+      <joint type="free"/>
+      <geom size="0.00612 0.0099" pos="0 0 0.0099" type="cylinder" rgba="0.1 0.1 0.1 1"/>
+      <geom size="0.0054" pos="0 0 0.0207" rgba="0.1 0.1 0.1 1"/>
+    </body>
+    <body name="piece_e1" pos="0.129 0.009 0.0046">
+      <joint type="free"/>
+      <geom size="0.00612 0.0108" pos="0 0 0.0108" type="cylinder" rgba="0.92 0.92 0.85 1"/>
+      <geom size="0.00468" pos="0 0 0.02232" rgba="0.92 0.92 0.85 1"/>
+      <geom size="0.0009 0.0009 0.00324" pos="0 0 0.0279" type="box" rgba="0.92 0.92 0.85 1"/>
+      <geom size="0.00252 0.0009 0.0009" pos="0 0 0.0279" type="box" rgba="0.92 0.92 0.85 1"/>
+    </body>
+    <body name="piece_e8" pos="0.255 0.009 0.0046">
+      <joint type="free"/>
+      <geom size="0.00612 0.0108" pos="0 0 0.0108" type="cylinder" rgba="0.1 0.1 0.1 1"/>
+      <geom size="0.00468" pos="0 0 0.02232" rgba="0.1 0.1 0.1 1"/>
+      <geom size="0.0009 0.0009 0.00324" pos="0 0 0.0279" type="box" rgba="0.1 0.1 0.1 1"/>
+      <geom size="0.00252 0.0009 0.0009" pos="0 0 0.0279" type="box" rgba="0.1 0.1 0.1 1"/>
+    </body>
+    <body name="piece_f1" pos="0.129 0.027 0.0046">
+      <joint type="free"/>
+      <geom size="0.0054 0.009" pos="0 0 0.009" type="cylinder" rgba="0.92 0.92 0.85 1"/>
+      <geom size="0.00396" pos="0 0 0.0189" rgba="0.92 0.92 0.85 1"/>
+    </body>
+    <body name="piece_f8" pos="0.255 0.027 0.0046">
+      <joint type="free"/>
+      <geom size="0.0054 0.009" pos="0 0 0.009" type="cylinder" rgba="0.1 0.1 0.1 1"/>
+      <geom size="0.00396" pos="0 0 0.0189" rgba="0.1 0.1 0.1 1"/>
+    </body>
+    <body name="piece_g1" pos="0.129 0.045 0.0046">
+      <joint type="free"/>
+      <geom size="0.0054 0.0054 0.0081" pos="0 0 0.0081" type="box" rgba="0.92 0.92 0.85 1"/>
+      <geom size="0.00288 0.00216 0.00216" pos="0.00288 0 0.01404" type="box" rgba="0.92 0.92 0.85 1"/>
+    </body>
+    <body name="piece_g8" pos="0.255 0.045 0.0046">
+      <joint type="free"/>
+      <geom size="0.0054 0.0054 0.0081" pos="0 0 0.0081" type="box" rgba="0.1 0.1 0.1 1"/>
+      <geom size="0.00288 0.00216 0.00216" pos="0.00288 0 0.01404" type="box" rgba="0.1 0.1 0.1 1"/>
+    </body>
+    <body name="piece_h1" pos="0.129 0.063 0.0046">
+      <joint type="free"/>
+      <geom size="0.00612 0.00612 0.009" pos="0 0 0.009" type="box" rgba="0.92 0.92 0.85 1"/>
+    </body>
+    <body name="piece_h8" pos="0.255 0.063 0.0046">
+      <joint type="free"/>
+      <geom size="0.00612 0.00612 0.009" pos="0 0 0.009" type="box" rgba="0.1 0.1 0.1 1"/>
+    </body>
+    <body name="piece_a2" pos="0.147 -0.063 0.0046">
+      <joint type="free"/>
+      <geom size="0.0063 0.0081" pos="0 0 0.0081" type="cylinder" rgba="0.92 0.92 0.85 1"/>
+    </body>
+    <body name="piece_a7" pos="0.237 -0.063 0.0046">
+      <joint type="free"/>
+      <geom size="0.0063 0.0081" pos="0 0 0.0081" type="cylinder" rgba="0.1 0.1 0.1 1"/>
+    </body>
+    <body name="piece_b2" pos="0.147 -0.045 0.0046">
+      <joint type="free"/>
+      <geom size="0.0063 0.0081" pos="0 0 0.0081" type="cylinder" rgba="0.92 0.92 0.85 1"/>
+    </body>
+    <body name="piece_b7" pos="0.237 -0.045 0.0046">
+      <joint type="free"/>
+      <geom size="0.0063 0.0081" pos="0 0 0.0081" type="cylinder" rgba="0.1 0.1 0.1 1"/>
+    </body>
+    <body name="piece_c2" pos="0.147 -0.027 0.0046">
+      <joint type="free"/>
+      <geom size="0.0063 0.0081" pos="0 0 0.0081" type="cylinder" rgba="0.92 0.92 0.85 1"/>
+    </body>
+    <body name="piece_c7" pos="0.237 -0.027 0.0046">
+      <joint type="free"/>
+      <geom size="0.0063 0.0081" pos="0 0 0.0081" type="cylinder" rgba="0.1 0.1 0.1 1"/>
+    </body>
+    <body name="piece_d2" pos="0.147 -0.009 0.0046">
+      <joint type="free"/>
+      <geom size="0.0063 0.0081" pos="0 0 0.0081" type="cylinder" rgba="0.92 0.92 0.85 1"/>
+    </body>
+    <body name="piece_d7" pos="0.237 -0.009 0.0046">
+      <joint type="free"/>
+      <geom size="0.0063 0.0081" pos="0 0 0.0081" type="cylinder" rgba="0.1 0.1 0.1 1"/>
+    </body>
+    <body name="piece_e2" pos="0.147 0.009 0.0046">
+      <joint type="free"/>
+      <geom size="0.0063 0.0081" pos="0 0 0.0081" type="cylinder" rgba="0.92 0.92 0.85 1"/>
+    </body>
+    <body name="piece_e7" pos="0.237 0.009 0.0046">
+      <joint type="free"/>
+      <geom size="0.0063 0.0081" pos="0 0 0.0081" type="cylinder" rgba="0.1 0.1 0.1 1"/>
+    </body>
+    <body name="piece_f2" pos="0.147 0.027 0.0046">
+      <joint type="free"/>
+      <geom size="0.0063 0.0081" pos="0 0 0.0081" type="cylinder" rgba="0.92 0.92 0.85 1"/>
+    </body>
+    <body name="piece_f7" pos="0.237 0.027 0.0046">
+      <joint type="free"/>
+      <geom size="0.0063 0.0081" pos="0 0 0.0081" type="cylinder" rgba="0.1 0.1 0.1 1"/>
+    </body>
+    <body name="piece_g2" pos="0.147 0.045 0.0046">
+      <joint type="free"/>
+      <geom size="0.0063 0.0081" pos="0 0 0.0081" type="cylinder" rgba="0.92 0.92 0.85 1"/>
+    </body>
+    <body name="piece_g7" pos="0.237 0.045 0.0046">
+      <joint type="free"/>
+      <geom size="0.0063 0.0081" pos="0 0 0.0081" type="cylinder" rgba="0.1 0.1 0.1 1"/>
+    </body>
+    <body name="piece_h2" pos="0.147 0.063 0.0046">
+      <joint type="free"/>
+      <geom size="0.0063 0.0081" pos="0 0 0.0081" type="cylinder" rgba="0.92 0.92 0.85 1"/>
+    </body>
+    <body name="piece_h7" pos="0.237 0.063 0.0046">
+      <joint type="free"/>
+      <geom size="0.0063 0.0081" pos="0 0 0.0081" type="cylinder" rgba="0.1 0.1 0.1 1"/>
     </body>
   </worldbody>
 

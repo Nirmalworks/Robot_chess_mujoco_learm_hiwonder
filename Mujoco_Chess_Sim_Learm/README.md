@@ -7,6 +7,12 @@ calibration method before trying it on the real arm. No camera is mounted
 over the board — square positions come from the interpolation method in
 [`board_calibration.py`](board_calibration.py), not vision.
 
+A full set of 32 chess pieces is modeled on the board, and
+[`view_sim.py`](view_sim.py) has a `--play` mode that lets you play a game
+against Stockfish from the terminal — type moves in algebraic notation,
+Stockfish replies as "the robot," and every move is replayed in the 3-D
+scene by moving the corresponding piece body.
+
 ## Contents
 
 - `learm.urdf`, `meshes/` — LeArm description, copied from upstream with
@@ -20,7 +26,9 @@ over the board — square positions come from the interpolation method in
 - `learm_chess_scene.xml` — the generated, self-contained scene. This is
   what actually gets loaded; re-run `build_scene.py` to regenerate it if you
   edit `learm.urdf` or `table_scene.xml`.
-- `view_sim.py` — opens the interactive MuJoCo viewer on the scene.
+- `view_sim.py` — opens the interactive MuJoCo viewer on the scene (manual
+  jogging mode), or with `--play`, an interactive chess game against
+  Stockfish that's replayed move-by-move in the 3-D scene.
 - `board_calibration.py` — the 2-corner interpolation method + a validator
   that checks it against the sim's ground-truth square positions.
 
@@ -29,6 +37,15 @@ over the board — square positions come from the interpolation method in
 ```bash
 pip install -r requirements.txt
 ```
+
+`--play` mode also needs a `stockfish` binary on `PATH`:
+
+```bash
+brew install stockfish        # macOS
+# or: apt install stockfish   # Debian/Ubuntu
+```
+
+(or pass `--stockfish /path/to/stockfish` to point at one explicitly).
 
 ## Run it
 
@@ -53,6 +70,31 @@ or `table_scene.xml`, regenerate the combined scene:
 ```bash
 python3 build_scene.py
 ```
+
+### Playing chess against Stockfish
+
+```bash
+python3 view_sim.py --play                       # you play White
+python3 view_sim.py --play --side black          # you play Black
+python3 view_sim.py --play --skill 5 --movetime 0.5   # weaker, faster engine
+```
+
+Type moves in standard algebraic notation at the terminal prompt — `e4`,
+`Nf3`, `exd5`, `O-O` — optionally followed by a color word as a sanity check
+(`e4 white`); it's compared against whose turn it actually is and the move
+is rejected if it doesn't match. After your move, Stockfish (playing "the
+robot's" side) replies automatically, and both moves are animated in the
+MuJoCo viewer by lifting the corresponding piece body and setting it down on
+its destination square (captures go to a small holding area beside the
+board; castling moves the rook too).
+
+**This animates the *game state*, not an IK-planned pick-and-place by the
+arm's own joints.** The arm has no collision geometry yet (see Known
+limitations) and isn't driven during play mode — it just sits parked out of
+the way. Making the physical arm actually execute these moves (inverse
+kinematics for reach + orientation, grasping, possibly RL training if direct
+IK proves too fiddly for the small gripper) is the natural next step, not
+attempted here.
 
 ## Does jogging in the viewer move the real arm?
 
@@ -127,13 +169,23 @@ placement is still the recommended setup.
   density (see the comment in `learm.urdf`) — good enough for kinematic
   positioning, not for accurate torque/force dynamics.
 - **No collision geometry on the arm**: upstream has no `<collision>`
-  elements either, so the arm currently can't physically interact with
-  chess pieces in sim (no pieces are modelled yet, since none were asked
-  for here). Adding piece bodies + fingertip collision is a follow-up if
-  you want actual grasp simulation rather than just position calibration.
-- **Board/mount placement is a starting guess**: `ARM_MOUNT_POS` and the
-  chessboard position/size (in `build_scene.py` / `table_scene.xml`) were
-  chosen to keep the whole board within the arm's reach, and verified by
-  sampling reachability for all 4 corners — but you should still jog to the
-  4 corners yourself in the viewer and tune those constants if your real
-  table layout differs.
+  elements either, so the arm currently can't physically interact with the
+  chess pieces in sim. During `--play`, moves are replayed by directly
+  setting each piece body's position (a kinematic "replay," not a grasp) —
+  the arm itself just sits parked out of the way. Giving the arm collision
+  geometry and an IK/grasp controller so it actually executes these moves is
+  the natural next step; if direct IK turns out to be too fiddly for this
+  small gripper, training (RL) is the fallback, per the project's own
+  framing of this as a step-by-step build.
+- **Board/mount placement is tuned to this arm's reach, not a free choice**:
+  `ARM_MOUNT_POS` in `build_scene.py` and the chessboard position/size (in
+  `build_scene.py` / `table_scene.xml`) are set so the near edge of the
+  board sits exactly 0.15 m from the arm's mount point — matching the real
+  hardware's robot-to-board gap. The board's square size (0.018 m, vs. a
+  more standard ~0.025 m) was shrunk from an earlier, closer-mounted version
+  specifically so the far rank (8) still stays within this small arm's
+  reach at that 0.15 m gap (its max horizontal reach is only ~0.27-0.28 m at
+  board height) — verified by sampling reachability for all 4 corners. If
+  your real table layout differs, re-verify reachability before trusting
+  these constants; a bigger board pushed out to a true 0.15 m gap will not
+  fit this arm's reach.

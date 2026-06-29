@@ -28,20 +28,25 @@
 
     <!-- Table: top surface defined at world z = 0 -->
     <body name="table" pos="0 0 0">
-      <geom name="tabletop" type="box" size="0.30 0.25 0.01" pos="0 0 -0.01" material="table_mat"/>
-      <geom name="leg_fl" type="box" size="0.015 0.015 0.19" pos="0.27 0.22 -0.21" material="leg_mat"/>
-      <geom name="leg_fr" type="box" size="0.015 0.015 0.19" pos="0.27 -0.22 -0.21" material="leg_mat"/>
-      <geom name="leg_bl" type="box" size="0.015 0.015 0.19" pos="-0.27 0.22 -0.21" material="leg_mat"/>
-      <geom name="leg_br" type="box" size="0.015 0.015 0.19" pos="-0.27 -0.22 -0.21" material="leg_mat"/>
+      <geom name="tabletop" type="box" size="0.40 0.32 0.01" pos="0 0 -0.01" material="table_mat"/>
+      <geom name="leg_fl" type="box" size="0.015 0.015 0.19" pos="0.37 0.29 -0.21" material="leg_mat"/>
+      <geom name="leg_fr" type="box" size="0.015 0.015 0.19" pos="0.37 -0.29 -0.21" material="leg_mat"/>
+      <geom name="leg_bl" type="box" size="0.015 0.015 0.19" pos="-0.37 0.29 -0.21" material="leg_mat"/>
+      <geom name="leg_br" type="box" size="0.015 0.015 0.19" pos="-0.37 -0.29 -0.21" material="leg_mat"/>
     </body>
 
-    <!-- Chessboard: 8x8 grid, square = 0.025 m, sitting on the tabletop.
-         Centre placed in the arm's comfortable mid-reach zone.
+    <!-- Chessboard: 8x8 grid, square = 0.018 m, sitting on the tabletop.
+         Centre x is set so the near edge (the a/h-1 rank, closest to the arm)
+         sits exactly 0.15 m from the arm mount point (-0.03, 0, 0 in
+         build_scene.py) -- matching the real hardware's robot-to-board gap.
+         The square size was shrunk from the original 0.025 m so the far rank
+         (8) still stays within this small arm's ~0.27 m reach (verified
+         numerically; see board_calibration.py / README "Known limitations").
          NOTE: intentionally no top-down/overhead camera here -- position is
          meant to be found via the 2-corner interpolation method, not vision. -->
-    <body name="chessboard" pos="0.14 0 0.0">
-      <geom name="board_base" type="box" size="0.10 0.10 0.002" pos="0 0 0.002" rgba="0.25 0.18 0.10 1"/>
-      <geom name="board_slab" type="plane" size="0.10 0.10 0.01" pos="0 0 0.0045" material="board_mat"/>
+    <body name="chessboard" pos="0.192 0 0.0">
+      <geom name="board_base" type="box" size="0.072 0.072 0.002" pos="0 0 0.002" rgba="0.25 0.18 0.10 1"/>
+      <geom name="board_slab" type="plane" size="0.072 0.072 0.01" pos="0 0 0.0045" material="board_mat"/>
     </body>
   </worldbody>
 </mujoco>

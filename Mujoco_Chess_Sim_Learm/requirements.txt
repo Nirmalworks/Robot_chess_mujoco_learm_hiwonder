@@ -1,2 +1,3 @@
 mujoco
 numpy
+chess
