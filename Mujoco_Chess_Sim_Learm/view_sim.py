@@ -27,15 +27,19 @@ Two modes:
    Type moves in standard algebraic notation at the prompt (e.g. "e4",
    "Nf3", "exd5", "O-O"), optionally followed by a color word as a
    sanity-check ("e4 white") -- it's compared against whose turn it
-   actually is and rejected if it doesn't match. After your move, Stockfish
-   (playing "the robot's" side) replies automatically. Every move is
-   animated by picking the corresponding chess-piece body up off the board
-   and setting it down on its destination square -- this is a kinematic
-   replay of the game state, not an IK-planned pick-and-place by the arm's
-   own joints (the arm has no collision geometry yet and isn't driven
-   during play mode). Teaching the arm to actually execute these moves
-   (inverse kinematics, grasping, maybe RL) is flagged as follow-up work,
-   not attempted here.
+   actually is and rejected if it doesn't match.
+
+   Your move is just registered (matching how this would work on the real
+   board: you physically moved your own piece by hand). Stockfish then
+   replies as "the robot," and its move is carried out by the arm itself --
+   numerical inverse kinematics (damped-least-squares on the gripper_tip
+   site's Jacobian, see ArmController) drives shoulder_pan/shoulder_lift/
+   elbow/wrist_flex/wrist_roll through a hover -> descend -> grasp -> lift
+   -> carry -> place -> release -> retreat sequence, with the position
+   actuators' built-in PD control giving the "slowly move" motion. There's
+   no real grasp physics (the arm has no collision geometry yet -- see
+   Known limitations in README.md), so the piece is kinematically pinned to
+   the gripper_tip site while "held," not actually gripped by friction.
 
    Requires the `chess` package (see requirements.txt) and a `stockfish`
    binary on PATH (macOS: `brew install stockfish`), or pass
@@ -45,6 +49,7 @@ Two modes:
 import argparse
 import os
 import shutil
+import sys
 import threading
 import time
 
@@ -56,6 +61,13 @@ MODEL_PATH = "learm_chess_scene.xml"
 ARM_PREFIX = "arm_"
 PIECE_PREFIX = "piece_"
 TABLE_SURFACE_Z = 0.0  # see table_scene.xml: "Table: top surface defined at world z = 0"
+
+IK_JOINTS = ["shoulder_pan", "shoulder_lift", "elbow", "wrist_flex", "wrist_roll"]
+HOVER_HEIGHT = 0.06   # transit clearance above a square's surface -- clears the tallest piece (king)
+GRASP_HEIGHT = 0.015  # gripper_tip height above a square's surface while "holding" a piece
+GRIP_OPEN = 0.0
+GRIP_CLOSED = -1.2    # grip_left's URDF range is [-1.57, 0]; doesn't need to be physically exact
+                       # since there's no real grasp contact -- see module docstring.
 
 # A neutral "parked" pose for the arm during chess play, so it isn't sitting
 # in the URDF's zero pose (fully extended straight up, see README) the whole
@@ -91,6 +103,146 @@ def body_joint_addrs(model, body_name):
     bid = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, body_name)
     jadr = model.body_jntadr[bid]
     return model.jnt_qposadr[jadr], model.jnt_dofadr[jadr]
+
+
+class ArmController:
+    """Numerical IK + PD-actuator pick-and-place for the 5-DOF arm chain.
+
+    Position-only damped-least-squares IK on the gripper_tip site's
+    Jacobian (no orientation constraint -- the arm has only 5 DOF feeding a
+    3-DOF position task, so it's already redundant; adding an orientation
+    task would need per-axis sign analysis of the URDF that isn't worth the
+    risk for a cosmetic pick-and-place). solve_ik() runs its iterations
+    against the live `data` under `lock`, then restores the original qpos
+    -- it never disturbs the rendered/stepped state, it only computes a
+    target for the position actuators to converge to over real time.
+    """
+
+    def __init__(self, model, data, lock):
+        self.model = model
+        self.data = data
+        self.lock = lock
+        self.tip_sid = site_id(model, "gripper_tip")
+        jids = [mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_JOINT, ARM_PREFIX + j) for j in IK_JOINTS]
+        self.qadr = [model.jnt_qposadr[j] for j in jids]
+        self.dofadr = [model.jnt_dofadr[j] for j in jids]
+        self.ranges = [model.jnt_range[j].copy() for j in jids]
+        self.grip_actuator = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_ACTUATOR, "act_grip_left")
+        self.arm_actuators = [mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_ACTUATOR, "act_" + j) for j in IK_JOINTS]
+
+    def solve_ik(self, target, q0=None, iters=300, damping=0.05, step=1.0, tol=1.5e-3):
+        target = np.asarray(target, dtype=float)
+        with self.lock:
+            q = np.array([self.data.qpos[a] for a in self.qadr]) if q0 is None else np.array(q0, dtype=float)
+            saved_qpos = self.data.qpos.copy()
+            err_norm = None
+            for _ in range(iters):
+                for a, v in zip(self.qadr, q):
+                    self.data.qpos[a] = v
+                mujoco.mj_forward(self.model, self.data)
+                err = target - self.data.site_xpos[self.tip_sid]
+                err_norm = float(np.linalg.norm(err))
+                if err_norm < tol:
+                    break
+                jacp = np.zeros((3, self.model.nv))
+                jacr = np.zeros((3, self.model.nv))
+                mujoco.mj_jacSite(self.model, self.data, jacp, jacr, self.tip_sid)
+                J = jacp[:, self.dofadr]
+                dq = J.T @ np.linalg.solve(J @ J.T + damping * np.eye(3), err)
+                q = q + step * dq
+                for k, (lo, hi) in enumerate(self.ranges):
+                    q[k] = np.clip(q[k], lo, hi)
+            self.data.qpos[:] = saved_qpos
+            mujoco.mj_forward(self.model, self.data)
+        return q, err_norm
+
+    def set_gripper(self, value, max_step=0.04, poll_dt=0.02, timeout=2.0):
+        """Ramp grip_left's ctrl toward `value` in small steps. A sudden
+        jump (even with the arm otherwise still) drives the mimic-joint
+        equality constraints (grip_right/tendon/finger, see build_scene.py)
+        into a one-step violation large enough to blow up qacc -- verified
+        this empirically, same root cause as the arm-joint ramping in
+        _ramp_ctrl_to.
+        """
+        t0 = time.time()
+        while time.time() - t0 < timeout:
+            with self.lock:
+                cur = self.data.ctrl[self.grip_actuator]
+                step = np.clip(value - cur, -max_step, max_step)
+                new = cur + step
+                self.data.ctrl[self.grip_actuator] = new
+            if abs(new - value) < 1e-9:
+                break
+            time.sleep(poll_dt)
+
+    def _ramp_ctrl_to(self, q_target, follow_body=None, follow_offset=(0, 0, 0),
+                       max_step=0.035, tol=0.03, timeout=6.0, poll_dt=0.02):
+        """Ramp `ctrl` toward q_target in small steps (rather than jumping
+        straight to it) so the PD position actuators -- high gain, very
+        light/approximate link masses, see README's "Approximate inertials"
+        limitation -- don't see a huge instantaneous error and spike into
+        instability. This also happens to be exactly how the real Arduino
+        sketch eases servos (1deg/15ms, see root README), so it doubles as a
+        more realistic "slowly move."
+        """
+        fbody = body_joint_addrs(self.model, follow_body) if follow_body else None
+        t0 = time.time()
+        while time.time() - t0 < timeout:
+            with self.lock:
+                cur_ctrl = np.array([self.data.ctrl[aid] for aid in self.arm_actuators])
+                step = np.clip(q_target - cur_ctrl, -max_step, max_step)
+                new_ctrl = cur_ctrl + step
+                for aid, v in zip(self.arm_actuators, new_ctrl):
+                    self.data.ctrl[aid] = v
+                cur_qpos = np.array([self.data.qpos[a] for a in self.qadr])
+                if fbody:
+                    tip = self.data.site_xpos[self.tip_sid].copy()
+                    fqadr, fdadr = fbody
+                    self.data.qpos[fqadr:fqadr + 3] = tip + np.asarray(follow_offset)
+                    self.data.qpos[fqadr + 3:fqadr + 7] = [1, 0, 0, 0]
+                    self.data.qvel[fdadr:fdadr + 6] = 0
+            ctrl_settled = np.max(np.abs(new_ctrl - q_target)) < 1e-9
+            if ctrl_settled and np.max(np.abs(cur_qpos - q_target)) < tol:
+                break
+            time.sleep(poll_dt)
+
+    def move_to(self, target_xyz, follow_body=None, follow_offset=(0, 0, 0)):
+        with self.lock:
+            q0 = np.array([self.data.qpos[a] for a in self.qadr])
+        q_target, err = self.solve_ik(target_xyz, q0=q0)
+        self._ramp_ctrl_to(q_target, follow_body=follow_body, follow_offset=follow_offset)
+        return q_target, err
+
+    def pick_and_place(self, body_name, src_xyz, dst_xyz):
+        src_xyz = np.asarray(src_xyz, dtype=float)
+        dst_xyz = np.asarray(dst_xyz, dtype=float)
+        hover_src = src_xyz + [0, 0, HOVER_HEIGHT]
+        grasp_src = src_xyz + [0, 0, GRASP_HEIGHT]
+        hover_dst = dst_xyz + [0, 0, HOVER_HEIGHT]
+        grasp_dst = dst_xyz + [0, 0, GRASP_HEIGHT]
+        follow_offset = (0, 0, -GRASP_HEIGHT)
+
+        self.move_to(hover_src)
+        self.move_to(grasp_src)
+        self.set_gripper(GRIP_CLOSED)
+        time.sleep(0.25)
+        self.move_to(hover_src, follow_body=body_name, follow_offset=follow_offset)
+        self.move_to(hover_dst, follow_body=body_name, follow_offset=follow_offset)
+        self.move_to(grasp_dst, follow_body=body_name, follow_offset=follow_offset)
+
+        qadr, dadr = body_joint_addrs(self.model, body_name)
+        with self.lock:
+            self.data.qpos[qadr:qadr + 3] = dst_xyz
+            self.data.qpos[qadr + 3:qadr + 7] = [1, 0, 0, 0]
+            self.data.qvel[dadr:dadr + 6] = 0
+        self.set_gripper(GRIP_OPEN)
+        time.sleep(0.2)
+        self.move_to(hover_dst)
+
+    def go_rest(self):
+        q = np.array([REST_POSE[j] for j in IK_JOINTS])
+        self._ramp_ctrl_to(q, timeout=6.0)
+        self.set_gripper(REST_POSE["grip_left"])
 
 
 class ChessTable:
@@ -149,7 +301,19 @@ class ChessTable:
                 self.data.qvel[dadr:dadr + 6] = 0
             time.sleep(dt)
 
-    def apply_move(self, board, move, mover_label):
+    def _move_body(self, arm, body, dst_xyz):
+        """Move `body` (currently at its own qpos) to dst_xyz -- via arm IK
+        pick-and-place if `arm` is given, otherwise the simple kinematic
+        lift-carry-place animation used for the human's own moves."""
+        if arm is not None:
+            qadr, _ = body_joint_addrs(self.model, body)
+            with self.lock:
+                src_xyz = self.data.qpos[qadr:qadr + 3].copy()
+            arm.pick_and_place(body, src_xyz, dst_xyz)
+        else:
+            self._animate(body, dst_xyz[:2], dst_xyz[2])
+
+    def apply_move(self, board, move, mover_label, arm=None):
         import chess
 
         capture_sq = None
@@ -165,12 +329,12 @@ class ChessTable:
             body = self.square_to_body.pop(csq, None)
             if body:
                 xy = self._graveyard_xy(color)
-                self._animate(body, xy, TABLE_SURFACE_Z)
+                self._move_body(arm, body, np.array([xy[0], xy[1], TABLE_SURFACE_Z]))
 
         src, dst = chess.square_name(move.from_square), chess.square_name(move.to_square)
         body = self.square_to_body.pop(src)
         target = self.square_xyz(dst)
-        self._animate(body, target[:2], target[2])
+        self._move_body(arm, body, target)
         self.square_to_body[dst] = body
 
         if board.is_castling(move):
@@ -178,7 +342,7 @@ class ChessTable:
             rook_src, rook_dst = rook_pairs[dst]
             rbody = self.square_to_body.pop(rook_src)
             rtarget = self.square_xyz(rook_dst)
-            self._animate(rbody, rtarget[:2], rtarget[2])
+            self._move_body(arm, rbody, rtarget)
             self.square_to_body[rook_dst] = rbody
 
         if move.promotion:
@@ -211,7 +375,18 @@ def play_chess(model, data, args):
     board = chess.Board()
     human_color = chess.WHITE if args.side == "white" else chess.BLACK
 
-    viewer = mujoco.viewer.launch_passive(model, data)
+    try:
+        viewer = mujoco.viewer.launch_passive(model, data)
+    except RuntimeError as e:
+        if "mjpython" in str(e):
+            print("On macOS, --play needs the special `mjpython` launcher instead of `python3`\n"
+                  "(MuJoCo's passive viewer requires the main thread on macOS). Run:\n\n"
+                  f"    mjpython {' '.join([__file__] + sys.argv[1:])}\n")
+        else:
+            print(f"Couldn't open the MuJoCo viewer: {e}")
+        engine.quit()
+        return
+
     lock = threading.Lock()
     stop = threading.Event()
 
@@ -224,6 +399,7 @@ def play_chess(model, data, args):
         mujoco.mj_forward(model, data)
 
     table = ChessTable(model, data, lock)
+    arm = ArmController(model, data, lock)
 
     def physics_loop():
         while viewer.is_running() and not stop.is_set():
@@ -240,7 +416,8 @@ def play_chess(model, data, args):
 
     def play_engine_move():
         result = engine.play(board, chess.engine.Limit(time=args.movetime))
-        table.apply_move(board, result.move, "Robot (Stockfish)")
+        table.apply_move(board, result.move, "Robot (Stockfish)", arm=arm)
+        arm.go_rest()
 
     print(f"\nYou are playing {args.side}. Stockfish plays the other side (\"the robot\").")
     print("Enter moves in SAN, e.g. 'e4', 'Nf3', 'exd5', 'O-O' -- optionally followed by a color\n"

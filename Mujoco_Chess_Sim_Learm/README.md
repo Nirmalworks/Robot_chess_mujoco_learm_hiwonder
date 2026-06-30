@@ -9,9 +9,9 @@ over the board — square positions come from the interpolation method in
 
 A full set of 32 chess pieces is modeled on the board, and
 [`view_sim.py`](view_sim.py) has a `--play` mode that lets you play a game
-against Stockfish from the terminal — type moves in algebraic notation,
-Stockfish replies as "the robot," and every move is replayed in the 3-D
-scene by moving the corresponding piece body.
+against Stockfish from the terminal — type moves in algebraic notation, your
+own piece is just registered (you moved it by hand), and Stockfish's reply
+is carried out by the arm's own joints via numerical inverse kinematics.
 
 ## Contents
 
@@ -79,22 +79,46 @@ python3 view_sim.py --play --side black          # you play Black
 python3 view_sim.py --play --skill 5 --movetime 0.5   # weaker, faster engine
 ```
 
+**On macOS, use `mjpython` instead of `python3` for `--play`**
+(`mjpython view_sim.py --play`, same args otherwise) — MuJoCo's passive
+viewer, which `--play` needs to run the terminal loop alongside the live
+render, requires the main thread on macOS. `mjpython` ships alongside the
+`mujoco` pip package. Plain `python3 view_sim.py` (no `--play`, the manual
+jogging mode) doesn't need it, since `mujoco.viewer.launch` is a blocking
+call with no such restriction.
+
 Type moves in standard algebraic notation at the terminal prompt — `e4`,
 `Nf3`, `exd5`, `O-O` — optionally followed by a color word as a sanity check
 (`e4 white`); it's compared against whose turn it actually is and the move
-is rejected if it doesn't match. After your move, Stockfish (playing "the
-robot's" side) replies automatically, and both moves are animated in the
-MuJoCo viewer by lifting the corresponding piece body and setting it down on
-its destination square (captures go to a small holding area beside the
-board; castling moves the rook too).
+is rejected if it doesn't match.
 
-**This animates the *game state*, not an IK-planned pick-and-place by the
-arm's own joints.** The arm has no collision geometry yet (see Known
-limitations) and isn't driven during play mode — it just sits parked out of
-the way. Making the physical arm actually execute these moves (inverse
-kinematics for reach + orientation, grasping, possibly RL training if direct
-IK proves too fiddly for the small gripper) is the natural next step, not
-attempted here.
+Your move is just registered (matching the real setup: you physically moved
+your own piece by hand). Stockfish then replies as "the robot," and **its
+move is carried out by the arm itself**, not just teleported: `view_sim.py`'s
+`ArmController` runs numerical inverse kinematics (damped-least-squares on
+the `gripper_tip` site's Jacobian, position-only — see the class docstring
+for why orientation isn't constrained) to drive `shoulder_pan` /
+`shoulder_lift` / `elbow` / `wrist_flex` / `wrist_roll` through a hover →
+descend → grasp → lift → carry → place → release → retreat sequence for
+each piece that needs to move (captures mean the captured piece is picked up
+and carried to a holding area beside the board *before* the capturing piece
+is placed — two full pick-and-place sequences; castling is also two, king
+then rook). The arm's existing position actuators (PD control, see
+`build_scene.py`) supply the "slowly move" motion — `ctrl` is ramped toward
+each IK solution in small steps rather than jumped, both because that's how
+the real Arduino sketch eases servos (1°/15ms, see root README) and because
+jumping it outright reliably destabilized the sim during testing (the link
+masses are only approximate — see Known limitations — so the PD gains are
+stiff relative to them).
+
+There's no real grasp physics yet: the arm has no collision geometry (see
+Known limitations), so a piece is kinematically pinned to the `gripper_tip`
+site's position (with a small offset) while "held," not actually gripped by
+friction — opening/closing the gripper is cosmetic. Giving the arm collision
+geometry and a real grasp is the natural next step if this turns out to
+matter; RL training is the documented fallback if IK alone proves too
+fiddly for the small gripper, per this project's own framing of it as a
+step-by-step build.
 
 ## Does jogging in the viewer move the real arm?
 
@@ -168,15 +192,23 @@ placement is still the recommended setup.
   Values here are derived from each mesh's volume × an assumed effective
   density (see the comment in `learm.urdf`) — good enough for kinematic
   positioning, not for accurate torque/force dynamics.
-- **No collision geometry on the arm**: upstream has no `<collision>`
-  elements either, so the arm currently can't physically interact with the
-  chess pieces in sim. During `--play`, moves are replayed by directly
-  setting each piece body's position (a kinematic "replay," not a grasp) —
-  the arm itself just sits parked out of the way. Giving the arm collision
-  geometry and an IK/grasp controller so it actually executes these moves is
-  the natural next step; if direct IK turns out to be too fiddly for this
-  small gripper, training (RL) is the fallback, per the project's own
-  framing of this as a step-by-step build.
+- **No collision geometry on the arm, so no real grasp physics**: upstream
+  has no `<collision>` elements either, so the arm can't physically contact
+  the chess pieces in sim yet. During `--play`, the robot's (Stockfish's)
+  moves *are* executed by the arm's own joints via inverse kinematics (see
+  `ArmController` in `view_sim.py`) — it's not a position-only replay
+  anymore — but a piece is kinematically pinned to the `gripper_tip` site
+  while "held" rather than actually gripped by friction/contact. Giving the
+  arm collision geometry for a real grasp is the natural next step; if that
+  (or the IK itself) proves too fiddly for this small gripper, training
+  (RL) is the documented fallback, per the project's own framing of this as
+  a step-by-step build.
+- **IK is position-only, no orientation control**: the 5 arm joints feed a
+  3-DOF position task (already redundant), solved with damped-least-squares
+  on the `gripper_tip` Jacobian. The gripper's *orientation* at each
+  waypoint is whatever falls out of that solve, not constrained to point
+  straight down — fine for a cosmetic pick-and-place, but worth knowing if
+  you extend this toward a real grasp controller.
 - **Board/mount placement is tuned to this arm's reach, not a free choice**:
   `ARM_MOUNT_POS` in `build_scene.py` and the chessboard position/size (in
   `build_scene.py` / `table_scene.xml`) are set so the near edge of the
