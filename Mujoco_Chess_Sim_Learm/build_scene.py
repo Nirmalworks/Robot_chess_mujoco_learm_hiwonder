@@ -88,7 +88,14 @@ def build():
     # conflict with the slaved target, so widen them to avoid the equality
     # solver fighting a redundant limit.
     for dep, _, _ in MIMIC:
-        parent.joint(ARM_PREFIX + dep).range = [-3.14, 3.14]
+        jnt = parent.joint(ARM_PREFIX + dep)
+        jnt.range = [-3.14, 3.14]
+        # Without passive joint damping these mimic joints ring indefinitely
+        # (no actuator provides velocity damping here; only the equality
+        # constraint couples them to grip_left, so any perturbation just
+        # bounces). A small damping value kills oscillation without
+        # affecting the static equilibrium or the servo response.
+        jnt.damping = np.array([0.08, 0, 0])
 
     for dep, master, mult in MIMIC:
         parent.add_equality(
@@ -103,6 +110,9 @@ def build():
         full = ARM_PREFIX + jname
         jnt = parent.joint(full)
         lo, hi = jnt.range
+        # Small armature (effective rotor inertia) helps stabilise the
+        # high-gain PD controller against the very light URDF link masses.
+        jnt.armature = 0.002
         parent.add_actuator(
             name="act_" + jname,
             target=full,
@@ -110,7 +120,7 @@ def build():
             ctrlrange=[lo, hi],
             gainprm=[40, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             biastype=mujoco.mjtBias.mjBIAS_AFFINE,
-            biasprm=[0, -40, -2, 0, 0, 0, 0, 0, 0, 0],
+            biasprm=[0, -40, -4, 0, 0, 0, 0, 0, 0, 0],  # biasprm[2]: velocity damping (was -2)
         )
 
     hand_body = parent.body(ARM_PREFIX + "hand_link")

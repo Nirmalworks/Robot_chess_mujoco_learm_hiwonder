@@ -222,12 +222,18 @@ class ArmController:
         grasp_dst = dst_xyz + [0, 0, GRASP_HEIGHT]
         follow_offset = (0, 0, -GRASP_HEIGHT)
 
+        print(f"  arm: moving above {body_name}...", flush=True)
         self.move_to(hover_src)
+        print("  arm: descending to grasp...", flush=True)
         self.move_to(grasp_src)
+        print("  arm: closing gripper...", flush=True)
         self.set_gripper(GRIP_CLOSED)
-        time.sleep(0.25)
+        time.sleep(0.3)
+        print("  arm: lifting...", flush=True)
         self.move_to(hover_src, follow_body=body_name, follow_offset=follow_offset)
+        print("  arm: carrying to destination...", flush=True)
         self.move_to(hover_dst, follow_body=body_name, follow_offset=follow_offset)
+        print("  arm: placing...", flush=True)
         self.move_to(grasp_dst, follow_body=body_name, follow_offset=follow_offset)
 
         qadr, dadr = body_joint_addrs(self.model, body_name)
@@ -235,11 +241,13 @@ class ArmController:
             self.data.qpos[qadr:qadr + 3] = dst_xyz
             self.data.qpos[qadr + 3:qadr + 7] = [1, 0, 0, 0]
             self.data.qvel[dadr:dadr + 6] = 0
+        print("  arm: opening gripper, retreating...", flush=True)
         self.set_gripper(GRIP_OPEN)
         time.sleep(0.2)
         self.move_to(hover_dst)
 
     def go_rest(self):
+        print("  arm: returning to rest pose...", flush=True)
         q = np.array([REST_POSE[j] for j in IK_JOINTS])
         self._ramp_ctrl_to(q, timeout=6.0)
         self.set_gripper(REST_POSE["grip_left"])

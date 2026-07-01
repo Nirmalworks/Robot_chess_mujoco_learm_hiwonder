@@ -116,53 +116,53 @@
       <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_base"/>
       <body name="arm_shoulder_link" pos="0 0 0.059">
         <inertial pos="-0.00071 0 0.02011" quat="0.5 0.5 -0.5 0.5" mass="0.01934" diaginertia="2.115e-05 1.303e-05 1.303e-05"/>
-        <joint name="arm_shoulder_pan" pos="0 0 0" axis="0 0 1" range="-1.57 1.57" actuatorfrcrange="-1000 1000"/>
+        <joint name="arm_shoulder_pan" pos="0 0 0" axis="0 0 1" range="-1.57 1.57" actuatorfrcrange="-1000 1000" armature="0.002"/>
         <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_shoulder"/>
         <body name="arm_humerus_link" pos="-0.01 0 0.028">
           <inertial pos="0.00021 -0.00054 0.0526" mass="0.00777" diaginertia="1.281e-05 1.119e-05 2.437e-06"/>
-          <joint name="arm_shoulder_lift" pos="0 0 0" axis="0 1 0" range="-1.57 1.57" actuatorfrcrange="-1000 1000"/>
+          <joint name="arm_shoulder_lift" pos="0 0 0" axis="0 1 0" range="-1.57 1.57" actuatorfrcrange="-1000 1000" armature="0.002"/>
           <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_humerus"/>
           <body name="arm_forearm_link" pos="0 0 0.105">
             <inertial pos="-4e-05 0 0.04562" mass="0.0167" diaginertia="2.15e-05 1.801e-05 5.233e-06"/>
-            <joint name="arm_elbow" pos="0 0 0" axis="0 -1 0" range="-1.57 1.57" actuatorfrcrange="-1000 1000"/>
+            <joint name="arm_elbow" pos="0 0 0" axis="0 -1 0" range="-1.57 1.57" actuatorfrcrange="-1000 1000" armature="0.002"/>
             <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_forearm"/>
             <body name="arm_wrist_link" pos="0 0 0.09">
               <inertial pos="0.00986 0.00055 0.02407" quat="0.707107 0 0 0.707107" mass="0.01248" diaginertia="8.791e-06 7.419e-06 5.697e-06"/>
-              <joint name="arm_wrist_flex" pos="0 0 0" axis="0 -1 0" range="-1.57 1.57" actuatorfrcrange="-1000 1000"/>
+              <joint name="arm_wrist_flex" pos="0 0 0" axis="0 -1 0" range="-1.57 1.57" actuatorfrcrange="-1000 1000" armature="0.002"/>
               <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_wrist"/>
               <body name="arm_hand_link" pos="0 0 0.06">
                 <inertial pos="0.01616 -0.00431 0.02777" mass="0.00687" diaginertia="3.57e-06 3.492e-06 3.468e-06"/>
-                <joint name="arm_wrist_roll" pos="0 0 0" axis="0 0 1" range="-1.57 1.57" actuatorfrcrange="-1000 1000"/>
+                <joint name="arm_wrist_roll" pos="0 0 0" axis="0 0 1" range="-1.57 1.57" actuatorfrcrange="-1000 1000" armature="0.002"/>
                 <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_hand"/>
                 <site name="gripper_tip" pos="0 0 0.085" size="0.004"/>
                 <body name="arm_grip_left_link" pos="0 0.015 0.03" quat="0.707388 -0.706825 0 0">
                   <inertial pos="-0.00029 -0.00139 0.00928" mass="0.005" diaginertia="1.343e-06 1.024e-06 3.261e-07"/>
-                  <joint name="arm_grip_left" pos="0 0 0" axis="-1 0 0" range="-1.57 0" actuatorfrcrange="-1000 1000"/>
+                  <joint name="arm_grip_left" pos="0 0 0" axis="-1 0 0" range="-1.57 0" actuatorfrcrange="-1000 1000" armature="0.002"/>
                   <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_carpal-left"/>
                   <body name="arm_finger_left_link" pos="0 0 0.03" quat="0.707388 0.706825 0 0">
                     <inertial pos="4e-05 -0.00518 0.02471" mass="0.005" diaginertia="1.641e-06 1.482e-06 1.891e-07"/>
-                    <joint name="arm_finger_left" pos="0 0 0" axis="-1 0 0" range="-3.14 3.14" actuatorfrcrange="-1000 1000"/>
+                    <joint name="arm_finger_left" pos="0 0 0" axis="-1 0 0" range="-3.14 3.14" actuatorfrcrange="-1000 1000" damping="0.08"/>
                     <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_finger"/>
                   </body>
                 </body>
                 <body name="arm_grip_right_link" pos="0 -0.015 0.03" quat="0.707388 0.706825 0 0">
                   <inertial pos="0.00458 0.00164 0.00981" mass="0.005" diaginertia="1.344e-06 1.047e-06 3.536e-07"/>
-                  <joint name="arm_grip_right" pos="0 0 0" axis="-1 0 0" range="-3.14 3.14" actuatorfrcrange="-1000 1000"/>
+                  <joint name="arm_grip_right" pos="0 0 0" axis="-1 0 0" range="-3.14 3.14" actuatorfrcrange="-1000 1000" damping="0.08"/>
                   <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_carpal-right"/>
                   <body name="arm_finger_right_link" pos="0 0 0.03" quat="0.707388 -0.706825 0 0">
                     <inertial pos="4e-05 -0.00518 0.02471" mass="0.005" diaginertia="1.641e-06 1.482e-06 1.891e-07"/>
-                    <joint name="arm_finger_right" pos="0 0 0" axis="-1 0 0" range="-3.14 3.14" actuatorfrcrange="-1000 1000"/>
+                    <joint name="arm_finger_right" pos="0 0 0" axis="-1 0 0" range="-3.14 3.14" actuatorfrcrange="-1000 1000" damping="0.08"/>
                     <geom quat="1.32679e-06 0 0 1" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_finger"/>
                   </body>
                 </body>
                 <body name="arm_tendon_left_link" pos="0 0.005 0.05" quat="0.707388 -0.706825 0 0">
                   <inertial pos="4e-05 -8e-05 0.01451" quat="0.707107 0 0 0.707107" mass="0.005" diaginertia="6e-07 5.61e-07 8.101e-08"/>
-                  <joint name="arm_tendon_left" pos="0 0 0" axis="-1 0 0" range="-3.14 3.14" actuatorfrcrange="-1000 1000"/>
+                  <joint name="arm_tendon_left" pos="0 0 0" axis="-1 0 0" range="-3.14 3.14" actuatorfrcrange="-1000 1000" damping="0.08"/>
                   <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_tendon"/>
                 </body>
                 <body name="arm_tendon_right_link" pos="0 -0.005 0.05" quat="0.707388 0.706825 0 0">
                   <inertial pos="4e-05 -8e-05 0.01451" quat="0.707107 0 0 0.707107" mass="0.005" diaginertia="6e-07 5.61e-07 8.101e-08"/>
-                  <joint name="arm_tendon_right" pos="0 0 0" axis="-1 0 0" range="-3.14 3.14" actuatorfrcrange="-1000 1000"/>
+                  <joint name="arm_tendon_right" pos="0 0 0" axis="-1 0 0" range="-3.14 3.14" actuatorfrcrange="-1000 1000" damping="0.08"/>
                   <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_tendon"/>
                 </body>
               </body>
@@ -326,11 +326,11 @@
   </equality>
 
   <actuator>
-    <general name="act_shoulder_pan" joint="arm_shoulder_pan" ctrlrange="-1.57 1.57" biastype="affine" gainprm="40" biasprm="0 -40 -2"/>
-    <general name="act_shoulder_lift" joint="arm_shoulder_lift" ctrlrange="-1.57 1.57" biastype="affine" gainprm="40" biasprm="0 -40 -2"/>
-    <general name="act_elbow" joint="arm_elbow" ctrlrange="-1.57 1.57" biastype="affine" gainprm="40" biasprm="0 -40 -2"/>
-    <general name="act_wrist_flex" joint="arm_wrist_flex" ctrlrange="-1.57 1.57" biastype="affine" gainprm="40" biasprm="0 -40 -2"/>
-    <general name="act_wrist_roll" joint="arm_wrist_roll" ctrlrange="-1.57 1.57" biastype="affine" gainprm="40" biasprm="0 -40 -2"/>
-    <general name="act_grip_left" joint="arm_grip_left" ctrlrange="-1.57 0" biastype="affine" gainprm="40" biasprm="0 -40 -2"/>
+    <general name="act_shoulder_pan" joint="arm_shoulder_pan" ctrlrange="-1.57 1.57" biastype="affine" gainprm="40" biasprm="0 -40 -4"/>
+    <general name="act_shoulder_lift" joint="arm_shoulder_lift" ctrlrange="-1.57 1.57" biastype="affine" gainprm="40" biasprm="0 -40 -4"/>
+    <general name="act_elbow" joint="arm_elbow" ctrlrange="-1.57 1.57" biastype="affine" gainprm="40" biasprm="0 -40 -4"/>
+    <general name="act_wrist_flex" joint="arm_wrist_flex" ctrlrange="-1.57 1.57" biastype="affine" gainprm="40" biasprm="0 -40 -4"/>
+    <general name="act_wrist_roll" joint="arm_wrist_roll" ctrlrange="-1.57 1.57" biastype="affine" gainprm="40" biasprm="0 -40 -4"/>
+    <general name="act_grip_left" joint="arm_grip_left" ctrlrange="-1.57 0" biastype="affine" gainprm="40" biasprm="0 -40 -4"/>
   </actuator>
 </mujoco>
