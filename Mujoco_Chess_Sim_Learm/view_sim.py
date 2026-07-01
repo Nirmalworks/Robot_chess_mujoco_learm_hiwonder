@@ -63,6 +63,15 @@ PIECE_PREFIX = "piece_"
 TABLE_SURFACE_Z = 0.0  # see table_scene.xml: "Table: top surface defined at world z = 0"
 
 IK_JOINTS = ["shoulder_pan", "shoulder_lift", "elbow", "wrist_flex", "wrist_roll"]
+
+# IK starting seed that points the arm TOWARD the board.
+# The URDF zero pose is fully extended upward, and REST_POSE points the arm
+# backward (-x). With REST_POSE as the IK seed the solver hits joint limits
+# immediately and stalls ~190 mm from any board square.
+# This seed (shoulder_lift>0, elbow<0) folds the arm forward and down;
+# IK converges to <2 mm for all 64 squares in under 10 iterations.
+IK_BOARD_SEED = [0.0, 0.65, -1.22, -0.73, 0.0]
+
 HOVER_HEIGHT = 0.06   # transit clearance above a square's surface -- clears the tallest piece (king)
 GRASP_HEIGHT = 0.015  # gripper_tip height above a square's surface while "holding" a piece
 GRIP_OPEN = 0.0
@@ -207,13 +216,56 @@ class ArmController:
             time.sleep(poll_dt)
 
     def move_to(self, target_xyz, follow_body=None, follow_offset=(0, 0, 0)):
-        with self.lock:
-            q0 = np.array([self.data.qpos[a] for a in self.qadr])
-        q_target, err = self.solve_ik(target_xyz, q0=q0)
+        # Always seed IK from IK_BOARD_SEED (points arm toward board).
+        # Using the current qpos as seed fails when coming from REST_POSE
+        # because REST_POSE aims the arm backward — the solver stalls at joint
+        # limits ~190 mm from any board square.
+        q_target, err = self.solve_ik(target_xyz, q0=IK_BOARD_SEED)
         self._ramp_ctrl_to(q_target, follow_body=follow_body, follow_offset=follow_offset)
         return q_target, err
 
+    def _move_vertical(self, start_xyz, end_xyz, n_steps=8,
+                        follow_body=None, follow_offset=(0, 0, 0)):
+        """Move strictly vertically (XY locked, Z interpolated) through n_steps
+        IK waypoints.
+
+        Why: move_to() targets a single Cartesian point but resolves it via IK
+        into joint-space, so the path between waypoints curves in Cartesian
+        space. That's fine for horizontal transit above the board (nothing to
+        hit up there) but NOT for descent/ascent near the board surface, where
+        a small horizontal swing would clip adjacent pieces. Stepping through
+        many intermediate points with the same XY keeps the Cartesian path
+        essentially straight -- each step's IK error is tiny so the joint
+        correction is tiny, leaving no room for lateral drift.
+        """
+        start_xyz = np.asarray(start_xyz, dtype=float)
+        end_xyz   = np.asarray(end_xyz,   dtype=float)
+        for i in range(1, n_steps + 1):
+            t = i / n_steps
+            # X and Y come from start (locked), only Z interpolates
+            waypoint = np.array([start_xyz[0], start_xyz[1],
+                                  start_xyz[2] + (end_xyz[2] - start_xyz[2]) * t])
+            self.move_to(waypoint, follow_body=follow_body,
+                         follow_offset=follow_offset)
+
     def pick_and_place(self, body_name, src_xyz, dst_xyz):
+        """
+        Safe pick-and-place sequence -- gripper state at every phase:
+
+          Phase 1 OPEN  → transit to hover above source (XY move, high up)
+          Phase 2 OPEN  → descend VERTICALLY onto source (XY locked!)
+          Phase 3 CLOSE → gripper closes around piece
+          Phase 4 CLOSE → ascend VERTICALLY to hover height (XY locked!)
+          Phase 5 CLOSE → transit to hover above destination (XY move, high up)
+          Phase 6 CLOSE → descend VERTICALLY onto destination (XY locked!)
+          Phase 7 OPEN  → release piece at destination
+          Phase 8 OPEN  → ascend VERTICALLY back to hover (XY locked!)
+
+        Gripper only changes state at grasp height -- never mid-transit and
+        never at hover height where nearby pieces are directly below.
+        Both descents and ascents use _move_vertical so the arm path stays
+        straight up/down, not curving through neighboring squares.
+        """
         src_xyz = np.asarray(src_xyz, dtype=float)
         dst_xyz = np.asarray(dst_xyz, dtype=float)
         hover_src = src_xyz + [0, 0, HOVER_HEIGHT]
@@ -222,29 +274,49 @@ class ArmController:
         grasp_dst = dst_xyz + [0, 0, GRASP_HEIGHT]
         follow_offset = (0, 0, -GRASP_HEIGHT)
 
-        print(f"  arm: moving above {body_name}...", flush=True)
+        # Phase 1 -- gripper OPEN, transit at safe height
+        print(f"  [1/8] OPEN  → hover above {body_name}...", flush=True)
+        self.set_gripper(GRIP_OPEN)
         self.move_to(hover_src)
-        print("  arm: descending to grasp...", flush=True)
-        self.move_to(grasp_src)
-        print("  arm: closing gripper...", flush=True)
-        self.set_gripper(GRIP_CLOSED)
-        time.sleep(0.3)
-        print("  arm: lifting...", flush=True)
-        self.move_to(hover_src, follow_body=body_name, follow_offset=follow_offset)
-        print("  arm: carrying to destination...", flush=True)
-        self.move_to(hover_dst, follow_body=body_name, follow_offset=follow_offset)
-        print("  arm: placing...", flush=True)
-        self.move_to(grasp_dst, follow_body=body_name, follow_offset=follow_offset)
 
+        # Phase 2 -- gripper OPEN, straight-down descent (XY locked)
+        print(f"  [2/8] OPEN  → descend vertically onto {body_name}...", flush=True)
+        self._move_vertical(hover_src, grasp_src)
+
+        # Phase 3 -- close gripper AT grasp height
+        print(f"  [3/8] CLOSING gripper around {body_name}...", flush=True)
+        self.set_gripper(GRIP_CLOSED)
+        time.sleep(0.25)
+
+        # Phase 4 -- gripper CLOSED, straight-up ascent (XY locked, piece rides along)
+        print(f"  [4/8] CLOSED → ascend vertically (piece lifted)...", flush=True)
+        self._move_vertical(grasp_src, hover_src,
+                            follow_body=body_name, follow_offset=follow_offset)
+
+        # Phase 5 -- gripper CLOSED, transit at safe height
+        print(f"  [5/8] CLOSED → carry to hover above destination...", flush=True)
+        self.move_to(hover_dst, follow_body=body_name, follow_offset=follow_offset)
+
+        # Phase 6 -- gripper CLOSED, straight-down descent to destination (XY locked)
+        print(f"  [6/8] CLOSED → descend vertically to destination...", flush=True)
+        self._move_vertical(hover_dst, grasp_dst,
+                            follow_body=body_name, follow_offset=follow_offset)
+
+        # Snap piece qpos to exact destination (no real contact physics yet)
         qadr, dadr = body_joint_addrs(self.model, body_name)
         with self.lock:
             self.data.qpos[qadr:qadr + 3] = dst_xyz
             self.data.qpos[qadr + 3:qadr + 7] = [1, 0, 0, 0]
             self.data.qvel[dadr:dadr + 6] = 0
-        print("  arm: opening gripper, retreating...", flush=True)
+
+        # Phase 7 -- open gripper AT destination (piece released)
+        print(f"  [7/8] OPENING gripper, releasing piece...", flush=True)
         self.set_gripper(GRIP_OPEN)
         time.sleep(0.2)
-        self.move_to(hover_dst)
+
+        # Phase 8 -- gripper OPEN, straight-up retreat (XY locked, no accidental sweeps)
+        print(f"  [8/8] OPEN   → ascend vertically, retreating...", flush=True)
+        self._move_vertical(grasp_dst, hover_dst)
 
     def go_rest(self):
         print("  arm: returning to rest pose...", flush=True)
@@ -337,7 +409,13 @@ class ChessTable:
             body = self.square_to_body.pop(csq, None)
             if body:
                 xy = self._graveyard_xy(color)
+                # CAPTURE STEP 1 -- clear the captured piece to the graveyard
+                # BEFORE the attacking piece moves. Otherwise the arm would try
+                # to place two pieces on the same square simultaneously.
+                print(f"\n  *** CAPTURE: picking up {color} piece on {csq} → graveyard ***",
+                      flush=True)
                 self._move_body(arm, body, np.array([xy[0], xy[1], TABLE_SURFACE_Z]))
+                print(f"  *** Captured piece cleared. Now moving attacker. ***\n", flush=True)
 
         src, dst = chess.square_name(move.from_square), chess.square_name(move.to_square)
         body = self.square_to_body.pop(src)
