@@ -5,7 +5,7 @@ import pygame
 # =========================
 # SERIAL SETTINGS
 # =========================
-COM_PORT = "COM4"
+COM_PORT = "/dev/ttyACM0"
 BAUD = 115200
 
 ser = serial.Serial(COM_PORT, BAUD, timeout=1)
@@ -16,7 +16,7 @@ time.sleep(2)
 # base, shoulder, arm, wrist, extra(elbow), gripper
 # =========================
 
-HOME = [100, 85, 84, 178, 72, 143]
+HOME = [90, 90, 90, 90, 90, 90]
 
 GRIPPER_OPEN = 80
 GRIPPER_CLOSED = 143
@@ -73,6 +73,7 @@ print("  L stick X = base      L stick Y = shoulder")
 print("  R stick Y = arm       R stick X = wrist")
 print("  LT / RT   = elbow     X = open / B = close gripper")
 print("  Y = home              Back = quit")
+print("  Start     = PRINT POSITION (copy this to notepad)")
 
 # =========================
 # CONTROL LOOP
@@ -106,16 +107,19 @@ try:
             pos[4] -= STEP        # elbow other way
 
         # --- BUTTONS -> gripper (index 5) ---
-        if js.get_button(2):      # X = open gripper
+        if js.get_button(3):      # X = open gripper
             pos[5] = GRIPPER_OPEN
         if js.get_button(1):      # B = close gripper
             pos[5] = GRIPPER_CLOSED
 
-        # --- HOME / QUIT ---
-        if js.get_button(3):      # Y = go home
+        # --- HOME / QUIT / PRINT ---
+        if js.get_button(4):      # Y = go home
             pos[:] = HOME.copy()
-        if js.get_button(6):      # Back = quit
+        if js.get_button(7):      # Back = quit
             running = False
+        if js.get_button(8):      # Start = print position for notepad
+            print(f"\n>>> POSITION: base={int(pos[0])}, shoulder={int(pos[1])}, arm={int(pos[2])}, wrist={int(pos[3])}, elbow={int(pos[4])}, gripper={int(pos[5])}")
+            print(f">>> RAW LIST: [{int(pos[0])}, {int(pos[1])}, {int(pos[2])}, {int(pos[3])}, {int(pos[4])}, {int(pos[5])}]\n")
 
         # --- DEBUG: print activity ---
         if lx or ly or rx or ry:
@@ -124,11 +128,11 @@ try:
             print("RT -> elbow +")
         if lt > 0.2:
             print("LT -> elbow -")
-        if js.get_button(2):
+        if js.get_button(3):
             print("X -> gripper open")
         if js.get_button(1):
             print("B -> gripper close")
-        if js.get_button(3):
+        if js.get_button(4):
             print("Y -> home")
 
         clamp_all()
